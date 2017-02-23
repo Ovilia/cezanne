@@ -25,7 +25,9 @@
         <canvas id="mainCanvas" width="800px" height="600px" ></canvas>
 
         <div id="control">
-            <button onclick="useShader('cartoon')">Cartoon Shading</button>
+            <button onclick="useShader('none')">Origin</button>
+            <button onclick="useShader('cartoon')">Cartoon</button>
+            <button onclick="useShader('normal')">Normal</button>
         </div>
 
         <script src="lib/three.js"></script>
@@ -43,6 +45,8 @@
             var appleMesh = null;
             var stemMesh = null;
             var groupMesh = null;
+            var appleMat = null;
+            var stemMat = null;
 
             var keyLight = null;
             var fillLight = null;
@@ -88,9 +92,11 @@
                             if (child instanceof THREE.Mesh) {
                                 if (!appleMesh) {
                                     appleMesh = child;
+                                    appleMat = appleMesh.material;
                                 }
                                 else {
                                     stemMesh = child;
+                                    stemMat = stemMesh.material;
                                 }
                             }
                         });
@@ -139,6 +145,12 @@
             }
 
             function useShader(name) {
+                if (name === 'none') {
+                    appleMesh.material = appleMat;
+                    stemMesh.material = stemMat;
+                    return;
+                }
+
                 if (!shaderConfig) {
                     // try after a second
                     setTimeout(function () {
