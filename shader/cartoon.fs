@@ -3,7 +3,6 @@ uniform vec3 uMaterialColor;
 varying vec3 vColor;
 varying vec3 vNormal;
 varying vec3 vLight;
-varying vec3 vEye;
 
 void main() {
     float diffuse = dot(normalize(vLight), vNormal);
