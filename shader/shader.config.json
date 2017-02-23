@@ -1,0 +1,20 @@
+{
+    "normal": {
+        "name": "Normal",
+        "apple": {
+            "path": "normal"
+        },
+        "stem": {
+            "path": "normal"
+        }
+    },
+    "cartoon": {
+        "name": "Cartoon",
+        "apple": {
+            "path": "cartoon"
+        },
+        "stem": {
+            "path": "cartoon"
+        }
+    }
+}

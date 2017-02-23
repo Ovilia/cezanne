@@ -1,5 +1,8 @@
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <style>
             #mainCanvas {
                 position: absolute;
@@ -8,18 +11,28 @@
                 top: 0;
                 bottom: 0;
             }
+
+            #control {
+                position: absolute;
+                z-index: 10;
+                right: 10px;
+                top: 10px;
+            }
         </style>
     </head>
 
-    <body>
-        <body onload="init()">
-            <canvas id="mainCanvas" width="800px" height="600px" ></canvas>
-        </body>
+    <body onload="init()">
+        <canvas id="mainCanvas" width="800px" height="600px" ></canvas>
+
+        <div id="control">
+            <button onclick="useShader('cartoon')">Cartoon Shading</button>
+        </div>
 
         <script src="lib/three.js"></script>
         <script src="lib/OBJLoader.js"></script>
         <script src="lib/MTLLoader.js"></script>
         <script src="lib/OrbitControls.js"></script>
+        <script src="lib/zepto.js"></script>
         <script src="lib/stats.min.js"></script>
 
         <script>
@@ -28,11 +41,17 @@
             var renderer = null;
 
             var appleMesh = null;
-            var branchMesh = null;
+            var stemMesh = null;
             var groupMesh = null;
-            var id = null;
+
+            var keyLight = null;
+            var fillLight = null;
+            var backLight = null;
 
             var controls = null;
+
+            var shaders = [];
+            var shaderConfig = null;
 
             var stats = new Stats();
             document.body.appendChild(stats.dom);
@@ -45,7 +64,7 @@
                 renderer = new THREE.WebGLRenderer({
                     canvas: canvas
                 });
-                renderer.setClearColor(0x000000);
+                renderer.setClearColor(0xf3f3f3);
                 scene = new THREE.Scene();
 
                 camera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 10, 10000);
@@ -71,7 +90,7 @@
                                     appleMesh = child;
                                 }
                                 else {
-                                    branchMesh = child;
+                                    stemMesh = child;
                                 }
                             }
                         });
@@ -82,12 +101,12 @@
                     });
                 });
 
-                keyLight = new THREE.SpotLight(0xffffff, 1, 4000, Math.PI / 6, 25);
-                keyLight.position.set(200, 200, 50);
+                keyLight = new THREE.SpotLight(0xffffff, 1, 5000, Math.PI / 6, 25);
+                keyLight.position.set(500, 500, 500);
                 keyLight.target.position.set(100, 0, 0);
                 scene.add(keyLight);
 
-                fillLight = new THREE.SpotLight(0xffffff, 0.4, 2000, Math.PI / 6, 25);
+                fillLight = new THREE.SpotLight(0xffffff, 0.4, 1000, Math.PI / 6, 25);
                 fillLight.position.set(80, -20, -200);
                 fillLight.target.position.set(0, 0, -200);
                 scene.add(fillLight);
@@ -98,6 +117,10 @@
                 // drawAxes();
 
                 tick();
+
+                $.get('./shader/shader.config.json', function (data) {
+                    shaderConfig = data;
+                });
             }
 
             function tick() {
@@ -108,11 +131,79 @@
 
                 stats.end();
 
-                id = requestAnimationFrame(tick);
+                requestAnimationFrame(tick);
             }
 
             function draw() {
                 renderer.render(scene, camera);
+            }
+
+            function useShader(name) {
+                if (!shaderConfig) {
+                    // try after a second
+                    setTimeout(function () {
+                        useShader(name);
+                    }, 1000);
+                    return;
+                }
+
+                var lightUniform = {
+                    type: 'v3',
+                    value: keyLight.position
+                };
+                console.log(lightUniform)
+                setShader('apple', appleMesh, {
+                    uniforms: {
+                        color: {
+                            type: 'v3',
+                            value: new THREE.Color('#f55c1f')
+                        },
+                        light: lightUniform
+                    }
+                });
+                setShader('stem', stemMesh, {
+                    uniforms: {
+                        color: {
+                            type: 'v3',
+                            value: new THREE.Color('#60371b')
+                        },
+                        light: lightUniform
+                    }
+                });
+
+                function setShader(meshName, mesh, qualifiers) {
+                    var config = shaderConfig[name][meshName];
+
+                    if (shaders[name]) {
+                        // use pre-loaded shader
+                        mesh.material = shaders[name][meshName];
+                    }
+                    else {
+                        // load
+                        $.get('./shader/' + config.path + '.vs', function (vs) {
+                            $.get(
+                                './shader/' + config.path + '.fs',
+                                function (fs) {
+                                    appleShader(vs, fs);
+                                }
+                            )
+                        })
+                    }
+
+                    function appleShader(vs, fs) {
+                        var material = new THREE.ShaderMaterial({
+                            vertexShader: vs,
+                            fragmentShader: fs,
+                            uniforms: qualifiers.uniforms
+                        });
+                        mesh.material = material;
+
+                        if (!shaders[name]) {
+                            shaders[name] = {};
+                        }
+                        shaders[name][meshName] = material;
+                    }
+                }
             }
 
             function drawAxes() {
@@ -149,9 +240,9 @@
 
             window.onresize = function () {
                 camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-				renderer.setSize(window.innerWidth, window.innerHeight);
-				draw();
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                draw();
             };
         </script>
     </body>
