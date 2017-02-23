@@ -1,0 +1,158 @@
+<html>
+    <head>
+        <style>
+            #mainCanvas {
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <body onload="init()">
+            <canvas id="mainCanvas" width="800px" height="600px" ></canvas>
+        </body>
+
+        <script src="lib/three.js"></script>
+        <script src="lib/OBJLoader.js"></script>
+        <script src="lib/MTLLoader.js"></script>
+        <script src="lib/OrbitControls.js"></script>
+        <script src="lib/stats.min.js"></script>
+
+        <script>
+            var scene = null;
+            var camera = null;
+            var renderer = null;
+
+            var appleMesh = null;
+            var branchMesh = null;
+            var groupMesh = null;
+            var id = null;
+
+            var controls = null;
+
+            var stats = new Stats();
+            document.body.appendChild(stats.dom);
+
+            function init() {
+                var canvas = document.getElementById('mainCanvas');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+
+                renderer = new THREE.WebGLRenderer({
+                    canvas: canvas
+                });
+                renderer.setClearColor(0x000000);
+                scene = new THREE.Scene();
+
+                camera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 10, 10000);
+                camera.position.set(133, 37, -36);
+                scene.add(camera);
+
+                controls = new THREE.OrbitControls(camera);
+                controls.addEventListener('change', draw);
+
+                var mtlLoader = new THREE.MTLLoader();
+                mtlLoader.setPath('./model/');
+                mtlLoader.load('apple.mtl', function(materials) {
+                    materials.preload();
+
+                    // model loader
+                    var objLoader = new THREE.OBJLoader();
+                    objLoader.setMaterials(materials);
+                    objLoader.setPath('./model/');
+                    objLoader.load('apple.obj', function (obj) {
+                        obj.traverse(function(child) {
+                            if (child instanceof THREE.Mesh) {
+                                if (!appleMesh) {
+                                    appleMesh = child;
+                                }
+                                else {
+                                    branchMesh = child;
+                                }
+                            }
+                        });
+
+                        groupMesh = obj;
+                        groupMesh.position.set(-50, -50, 0);
+                        scene.add(groupMesh);
+                    });
+                });
+
+                keyLight = new THREE.SpotLight(0xffffff, 1, 4000, Math.PI / 6, 25);
+                keyLight.position.set(200, 200, 50);
+                keyLight.target.position.set(100, 0, 0);
+                scene.add(keyLight);
+
+                fillLight = new THREE.SpotLight(0xffffff, 0.4, 2000, Math.PI / 6, 25);
+                fillLight.position.set(80, -20, -200);
+                fillLight.target.position.set(0, 0, -200);
+                scene.add(fillLight);
+
+                backLight = new THREE.AmbientLight(0xffffff, 0.2);
+                scene.add(backLight);
+
+                // drawAxes();
+
+                tick();
+            }
+
+            function tick() {
+                stats.begin();
+
+                controls.update();
+                draw();
+
+                stats.end();
+
+                id = requestAnimationFrame(tick);
+            }
+
+            function draw() {
+                renderer.render(scene, camera);
+            }
+
+            function drawAxes() {
+                // x-axis
+                var xGeo = new THREE.Geometry();
+                xGeo.vertices.push(new THREE.Vector3(0, 0, 0));
+                xGeo.vertices.push(new THREE.Vector3(1000, 0, 0));
+                var xMat = new THREE.LineBasicMaterial({
+                    color: 0xff0000
+                });
+                var xAxis = new THREE.Line(xGeo, xMat);
+                scene.add(xAxis);
+
+                // y-axis
+                var yGeo = new THREE.Geometry();
+                yGeo.vertices.push(new THREE.Vector3(0, 0, 0));
+                yGeo.vertices.push(new THREE.Vector3(0, 1000, 0));
+                var yMat = new THREE.LineBasicMaterial({
+                    color: 0x00ff00
+                });
+                var yAxis = new THREE.Line(yGeo, yMat);
+                scene.add(yAxis);
+
+                // z-axis
+                var zGeo = new THREE.Geometry();
+                zGeo.vertices.push(new THREE.Vector3(0, 0, 0));
+                zGeo.vertices.push(new THREE.Vector3(0, 0, 1000));
+                var zMat = new THREE.LineBasicMaterial({
+                    color: 0x00ccff
+                });
+                var zAxis = new THREE.Line(zGeo, zMat);
+                scene.add(zAxis);
+            }
+
+            window.onresize = function () {
+                camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				draw();
+            };
+        </script>
+    </body>
+</html>
