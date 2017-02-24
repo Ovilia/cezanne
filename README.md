@@ -8,11 +8,11 @@ This is a project showing varied shading algorithms with a simple apple.
 
 > *With an apple I will astonish Paris.*
 >
-> Paul Cézanne
+> \- Paul Cézanne
 
 Paul Cézanne was a famous and influential Post-Impressionist artist, who drew a great number of apples of all kinds.
 
-This project is intended to show my practice on shading algorithms and implementations.
+This project is intended to show my practice on **shading algorithms and implementations**.
 
 ## Reference
 
