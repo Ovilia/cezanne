@@ -12,11 +12,11 @@
                 bottom: 0;
             }
 
-            #control {
+            #info {
                 position: absolute;
                 z-index: 10;
-                right: 10px;
-                top: 10px;
+                left: 10px;
+                bottom: 10px;
             }
         </style>
     </head>
@@ -24,11 +24,10 @@
     <body onload="init()">
         <canvas id="mainCanvas" width="800px" height="600px" ></canvas>
 
-        <!--<div id="control">
-            <button onclick="useShader('none')">Origin</button>
-            <button onclick="useShader('cartoon')">Cartoon</button>
-            <button onclick="useShader('normal')">Normal</button>
-        </div>-->
+        <div id="info">
+            <a href="http://zhangwenli.com" target="_blank" onclick="_gaq.push(['_trackEvent', 'ToHome', 'InProject', 'Cezanne']);">Author</a>
+            <a href="https://github.com/Ovilia/cezanne" target="_blank" onclick="_gaq.push(['_trackEvent', 'ToGitHub', 'InProject', 'Cezanne']);">View at GitHub</a>
+        </div>
 
         <script src="lib/three.js"></script>
         <script src="lib/OBJLoader.js"></script>
@@ -69,7 +68,8 @@
                 canvas.height = window.innerHeight;
 
                 renderer = new THREE.WebGLRenderer({
-                    canvas: canvas
+                    canvas: canvas,
+                    antialias: true
                 });
                 renderer.setClearColor(0xf3f3f3);
                 scene = new THREE.Scene();
@@ -111,7 +111,7 @@
                 });
 
                 keyLight = new THREE.SpotLight(0xffffff, 1, 5000, Math.PI / 6, 25);
-                keyLight.position.set(500, 500, 500);
+                keyLight.position.set(1000, 1000, 500);
                 keyLight.target.position.set(100, 0, 0);
                 scene.add(keyLight);
 

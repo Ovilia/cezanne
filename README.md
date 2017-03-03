@@ -4,6 +4,8 @@ This is a project showing varied shading algorithms with a simple apple.
 
 [GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language) (OpenGL Shading Language) is mainly used for the shading effect, with the help of [Three.js](https://threejs.org).
 
+
+
 ## Project Name
 
 > *With an apple I will astonish Paris.*
@@ -13,6 +15,22 @@ This is a project showing varied shading algorithms with a simple apple.
 Paul Cézanne was a famous and influential Post-Impressionist artist, who drew a great number of apples of all kinds.
 
 This project is intended to show my practice on **shading algorithms and implementations**.
+
+
+
+## Rendering Results
+
+### Original Model
+
+![Original Model](./screenshots/origin.png)
+
+
+
+### Cartoon Shading
+
+![Cartoon Shading](./screenshots/cartoon.png)
+
+
 
 ## Reference
 
