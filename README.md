@@ -22,13 +22,13 @@ This project is intended to show my practice on **shading algorithms and impleme
 
 ### Original Model
 
-![Original Model](./screenshots/origin.png =350px)
+![Original Model](./screenshots/origin.png =350x)
 
 
 
 ### Cartoon Shading
 
-![Cartoon Shading](./screenshots/cartoon.png =350px)
+![Cartoon Shading](./screenshots/cartoon.png =350x)
 
 
 
