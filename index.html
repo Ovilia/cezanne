@@ -24,11 +24,11 @@
     <body onload="init()">
         <canvas id="mainCanvas" width="800px" height="600px" ></canvas>
 
-        <div id="control">
+        <!--<div id="control">
             <button onclick="useShader('none')">Origin</button>
             <button onclick="useShader('cartoon')">Cartoon</button>
             <button onclick="useShader('normal')">Normal</button>
-        </div>
+        </div>-->
 
         <script src="lib/three.js"></script>
         <script src="lib/OBJLoader.js"></script>
@@ -36,6 +36,7 @@
         <script src="lib/OrbitControls.js"></script>
         <script src="lib/zepto.js"></script>
         <script src="lib/stats.min.js"></script>
+        <script src="lib/dat.gui.min.js"></script>
 
         <script>
             var scene = null;
@@ -57,6 +58,8 @@
             var shaders = [];
             var shaderConfig = null;
 
+            var gui = null;
+
             var stats = new Stats();
             document.body.appendChild(stats.dom);
 
@@ -75,7 +78,7 @@
                 camera.position.set(133, 37, -36);
                 scene.add(camera);
 
-                controls = new THREE.OrbitControls(camera);
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
                 controls.addEventListener('change', draw);
 
                 var mtlLoader = new THREE.MTLLoader();
@@ -126,13 +129,13 @@
 
                 $.get('./shader/shader.config.json', function (data) {
                     shaderConfig = data;
+                    initControl();
                 });
             }
 
             function tick() {
                 stats.begin();
 
-                controls.update();
                 draw();
 
                 stats.end();
@@ -255,6 +258,47 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 draw();
             };
+
+            function initControl() {
+                gui = new dat.GUI();
+
+                var shaderNames = ['none'];
+                for (var shader in shaderConfig) {
+                    shaderNames.push(shader);
+                }
+
+                var option = {
+                    'Shader': 'none',
+                    'Light X': keyLight.position.x,
+                    'Light Y': keyLight.position.y,
+                    'Light Z': keyLight.position.z
+                };
+
+                // shader
+                gui.add(option, 'Shader', shaderNames)
+                    .onChange(function (value) {
+                        useShader(value);
+                    });
+
+                // light
+                var lightFolder = gui.addFolder('Light');
+                lightFolder.add(option, 'Light X')
+                    .min(-2000).max(2000)
+                    .onChange(function (value) {
+                        keyLight.position.x = value;
+
+                    });
+                lightFolder.add(option, 'Light Y')
+                    .min(-2000).max(2000)
+                    .onChange(function (value) {
+                        keyLight.position.y = value;
+                    });
+                lightFolder.add(option, 'Light Z')
+                    .min(-2000).max(2000)
+                    .onChange(function (value) {
+                        keyLight.position.z = value;
+                    });
+            }
         </script>
 
         <script type="text/javascript">
