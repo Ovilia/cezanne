@@ -1,5 +1,3 @@
-uniform vec3 uMaterialColor;
-
 varying vec3 vColor;
 varying vec3 vNormal;
 varying vec3 vLight;

@@ -4,6 +4,7 @@ This is a project showing varied shading algorithms with a simple apple.
 
 [GLSL](https://en.wikipedia.org/wiki/OpenGL_Shading_Language) (OpenGL Shading Language) is mainly used for the shading effect, with the help of [Three.js](https://threejs.org).
 
+[查看本项目对应的中文教程](http://zhangwenli.com/blog/2017/02/24/what-is-a-shader/)
 
 
 ## Project Name
