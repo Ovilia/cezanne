@@ -16,5 +16,14 @@
         "stem": {
             "path": "cartoon"
         }
+    },
+    "cartoon-silhouette": {
+        "name": "Cartoon with Silhouette",
+        "apple": {
+            "path": "cartoon-silhouette"
+        },
+        "stem": {
+            "path": "cartoon-silhouette"
+        }
     }
 }
